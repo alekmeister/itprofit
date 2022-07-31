@@ -10,6 +10,11 @@ export const validateFirstAndSecondName: validateFun = (value) => {
   if (!value) {
     error = 'Введите Имя и Фамилию';
   }
+
+  // Валидация на латинские буквы
+  else if (!/^[a-zA-Z\s]+$/.test(value)) {
+    return errorName;
+  }
   // Валидация на количество слов
   else if (inputValidate.length !== 3) {
     return errorName;

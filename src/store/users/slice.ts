@@ -6,7 +6,6 @@ import type { State } from 'store/users/types';
 import { postUserServer } from 'store/users/actionCreators/postUser';
 
 const getInitialState = (): State => ({
-  status: REQUEST_STATUS.PENDING,
   creatingStatus: REQUEST_STATUS.PENDING,
 });
 

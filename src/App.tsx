@@ -1,10 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import style from 'App.module.scss';
 import { useAppDispatch, useAppSelector } from 'store/types';
 import { postUserServer } from 'store/users/actionCreators/postUser';
 import { User, userInfo } from 'store/users/types';
-import { ErrorMessage, Field, Form, Formik, FormikProps } from 'formik';
+import { ErrorMessage, Field, Form, Formik } from 'formik';
 import cn from 'classnames';
 import { v4 as uuidv4 } from 'uuid';
 import { REQUEST_STATUS } from 'types/RequestStatuses';
@@ -31,7 +31,9 @@ const Info: userInfo[] = [
 ];
 
 const App: React.FC = () => {
-  const ref = useRef<FormikProps<User>>(null);
+  const [stateMessage, setStateMessage] = useState(false);
+  const dispatch = useAppDispatch();
+
   const valFunc = {
     valFirstAndSecondName: validateFirstAndSecondName,
     valEmail: validateEmail,
@@ -40,25 +42,24 @@ const App: React.FC = () => {
     valMessage: validateMessage,
   };
 
-  const [stateMessage, setStateMessage] = useState(false);
-  const renderMessage = () => (
-    <div className={style.success}>
-      <div className={style.success_inner}>Сообщение успешно отправлено</div>
-    </div>
-  );
-
   const creatingStatus = useAppSelector((state) => state.users.creatingStatus);
   const isLoading = creatingStatus === REQUEST_STATUS.LOADING;
   const isSuccess = creatingStatus === REQUEST_STATUS.SUCCESS;
   const isError = creatingStatus === REQUEST_STATUS.ERROR;
+
   useEffect(() => {
     if (isSuccess) {
       setStateMessage(true);
     }
-    setTimeout(setStateMessage, 2500);
+    const timeout = setTimeout(() => {
+      setStateMessage(false);
+    }, 2500);
+
+    return () => {
+      clearTimeout(timeout);
+    };
   }, [isSuccess]);
 
-  const dispatch = useAppDispatch();
   const switchBtnState = () => {
     switch (creatingStatus) {
       case REQUEST_STATUS.LOADING:
@@ -81,7 +82,6 @@ const App: React.FC = () => {
         onSubmit={(user, { resetForm }) => {
           dispatch(postUserServer({ newUser: user, cb: resetForm }));
         }}
-        innerRef={ref}
       >
         <Form className={style.form}>
           {Info.map(({ name, placeholder, type, property }, i) => (
@@ -103,7 +103,11 @@ const App: React.FC = () => {
           </div>
         </Form>
       </Formik>
-      {stateMessage && renderMessage()}
+      {stateMessage && (
+        <div className={style.success}>
+          <div className={style.success_inner}>Сообщение успешно отправлено</div>
+        </div>
+      )}
     </div>
   );
 };

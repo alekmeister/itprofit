@@ -8,7 +8,7 @@ import { setCreatingStatus } from 'store/users/slice';
 
 interface Params {
   newUser: User;
-  cb: () => void;
+  cb?: () => void;
 }
 
 export const postUserServer = createAsyncThunk<User, Params>(`${SLICE_NAME}/postUser`, async ({ newUser, cb }, { dispatch }) => {

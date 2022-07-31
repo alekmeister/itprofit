@@ -10,8 +10,12 @@ export interface User {
 }
 
 export interface State {
-  status: REQUEST_STATUS;
   creatingStatus: REQUEST_STATUS;
 }
 
-export type userInfo = { name: string; placeholder: string; property?: string | Record<string, string>; type: string };
+export type userInfo = {
+  name: keyof User;
+  placeholder: string;
+  property?: string | Record<string, string>;
+  type: string;
+};
